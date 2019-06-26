@@ -30,19 +30,25 @@ class Test
     answer == END_TEST
   end
 
+  def get_from_user
+    answer = ''
+
+    # записываю ответ при вводе 1, 2 или 3, прерываю тест при вводе 9
+    while answer_valid?(answer)
+      puts 'Введите ваш ответ: 1 - "Да", 2 - "Нет", 3 - "Иногда" ' \
+           "или #{END_TEST} для принудительного завершения..."
+      answer = STDIN.gets.strip.downcase
+    end
+
+    answer
+  end
+
   # последовательно выводит вопросы пользователю
   def show_questions
     @questions.each.with_index(1) do |question, index|
       puts "#{index}. #{question} "
 
-      answer = ''
-
-      # записываю ответ при вводе 1, 2 или 3, прерываю тест при вводе 9
-      while answer_valid?(answer)
-        puts 'Введите ваш ответ: 1 - "Да", 2 - "Нет", 3 - "Иногда" ' \
-             "или #{END_TEST} для принудительного завершения..."
-        answer = STDIN.gets.strip.downcase
-      end
+      answer = get_from_user
 
       if interrupted?(answer)
         # тест принудительно завершен
