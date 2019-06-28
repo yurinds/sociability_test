@@ -1,40 +1,48 @@
 require_relative 'lib/test'
-require_relative 'lib/result_printer'
+require_relative 'lib/result'
+require_relative 'lib/methods'
 
 current_path = File.dirname(__FILE__)
 questions_path = current_path + '/data/questions.txt'
 results_path = current_path + '/data/results.txt'
 
+abort "Файл с вопросами #{questions_path} не найден." unless File.exist?(questions_path)
 abort "Файл с результатами #{results_path} не найден." unless File.exist?(results_path)
 
-file = File.new(results_path, 'r:UTF-8')
-results = file.readlines
-results.map!(&:strip)
-file.close
-
-abort "Файл с вопросами #{questions_path} не найден." unless File.exist?(questions_path)
-
-file = File.new(questions_path, 'r:UTF-8')
-questions = file.readlines
-questions.map!(&:strip)
-file.close
+questions = read_file(questions_path)
+results = read_file(results_path)
 
 test = Test.new(questions)
-printer = ResultPrinter.new(results)
+result = Result.new(results)
 
-test.start_test
+puts test.show_start_test
+gets
 
-test.show_questions
+force_interrupt_key = test.force_interrupt
+index = 1
+until test.end_test? || test.aborted?
+  question = test.next_question
+  puts "#{index}. #{question} "
+
+  answer = ''
+  while test.answer_valid?(answer)
+    puts 'Введите ваш ответ: 1 - "Да", 2 - "Нет", 3 - "Иногда" ' \
+         "или #{force_interrupt_key} для принудительного завершения..."
+    answer = STDIN.gets.strip.downcase
+  end
+
+  test.response_processing(answer)
+
+  index += 1
+end
 
 if test.aborted?
   puts 'Тест принудительно прекращён! Очень жаль...'
 else
-
-  printer.set_result(test.all_points)
+  result.set_result(test.all_points)
 
   puts
   puts "Количество набранных баллов #{test.all_points}"
   puts 'Ваш результат:'
-  puts printer.final_result
-
+  puts result.final_result
 end

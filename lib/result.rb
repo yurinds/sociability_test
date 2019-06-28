@@ -1,4 +1,4 @@
-class ResultPrinter
+class Result
   attr_reader :results
   attr_accessor :final_result
 
@@ -19,4 +19,4 @@ class ResultPrinter
                       @results[6]
     end
   end
-  end
+end
