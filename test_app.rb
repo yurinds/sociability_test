@@ -1,6 +1,5 @@
 require_relative 'lib/test'
 require_relative 'lib/result'
-require_relative 'lib/methods'
 
 current_path = File.dirname(__FILE__)
 questions_path = current_path + '/data/questions.txt'
@@ -9,8 +8,8 @@ results_path = current_path + '/data/results.txt'
 abort "Файл с вопросами #{questions_path} не найден." unless File.exist?(questions_path)
 abort "Файл с результатами #{results_path} не найден." unless File.exist?(results_path)
 
-questions = read_file(questions_path)
-results = read_file(results_path)
+questions = File.readlines(questions_path, chomp: true)
+results = File.readlines(results_path, chomp: true)
 
 test = Test.new(questions)
 result = Result.new(results)
